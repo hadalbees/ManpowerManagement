@@ -16,8 +16,20 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "types": ["./worker-configuration.d.ts", "node"]
   },
-  "exclude": ["node_modules", "dist", "prisma", "**/*.spec.ts", "test-*.ts", "run-all-tests.ts"]
+  "include": [
+  "src/**/*.ts",
+  "worker-configuration.d.ts",
+  "cloudflare-node.d.ts"
+],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "prisma",
+    "**/*.spec.ts",
+    "test-*.ts",
+    "run-all-tests.ts"
+  ]
 }
-

@@ -1,19 +1,20 @@
-import { Injectable, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  constructor(private reflector: Reflector) {
-    super();
-  }
-
   canActivate(context: ExecutionContext) {
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const handler = context.getHandler();
+    const controller = context.getClass();
+
+    const isPublic =
+      Reflect.getMetadata(IS_PUBLIC_KEY, handler) ??
+      Reflect.getMetadata(IS_PUBLIC_KEY, controller);
 
     if (isPublic) {
       return true;
@@ -24,11 +25,15 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   handleRequest(err: any, user: any, info: any) {
     if (err || !user) {
-      throw err || new UnauthorizedException({
-        code: 'AUTH_UNAUTHORIZED',
-        message: 'Authentication token is missing or invalid',
-      });
+      throw (
+        err ||
+        new UnauthorizedException({
+          code: 'AUTH_UNAUTHORIZED',
+          message: 'Authentication token is missing or invalid',
+        })
+      );
     }
+
     return user;
   }
 }

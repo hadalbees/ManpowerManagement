@@ -6,7 +6,8 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
+// import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuthorizationService } from '../authorization/authorization.service';
@@ -26,7 +27,7 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly authzService: AuthorizationService,
     private readonly auditService: AuditService,
-  ) {}
+  ) { }
 
   /**
    * Secure User Authentication
@@ -214,10 +215,10 @@ export class AuthService {
         },
         branch: user.branch
           ? {
-              id: user.branch.id,
-              name: user.branch.branchName,
-              code: user.branch.branchCode,
-            }
+            id: user.branch.id,
+            name: user.branch.branchName,
+            code: user.branch.branchCode,
+          }
           : null,
         effectivePermissions,
       },
@@ -257,7 +258,7 @@ export class AuthService {
     // Token Reuse Detection: If session is already revoked, potential security breach!
     if (session.isRevoked) {
       this.logger.warn(`Security Alert: Revoked refresh token reuse detected for user ${session.userId}! Revoking all sessions.`);
-      
+
       // Revoke ALL active sessions for this user
       await this.prisma.userSession.updateMany({
         where: { userId: session.userId, isRevoked: false },
@@ -484,10 +485,10 @@ export class AuthService {
       },
       branch: user.branch
         ? {
-            id: user.branch.id,
-            name: user.branch.branchName,
-            code: user.branch.branchCode,
-          }
+          id: user.branch.id,
+          name: user.branch.branchName,
+          code: user.branch.branchCode,
+        }
         : null,
       effectivePermissions,
     };

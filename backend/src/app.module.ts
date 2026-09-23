@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+// import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthorizationModule } from './modules/authorization/authorization.module';
 import { AuditModule } from './modules/audit/audit.module';
@@ -53,6 +54,7 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
   ],
   controllers: [],
   providers: [
+    Reflector,
     {
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
@@ -63,4 +65,4 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }
