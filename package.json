@@ -1,0 +1,19 @@
+{
+  "name": "manpower-agency-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Apex Manpower Agency Management System - Full Stack Enterprise ERP",
+  "scripts": {
+    "backend": "npm --prefix backend run start:dev",
+    "backend:prod": "npm --prefix backend run start:prod",
+    "frontend": "npm --prefix frontend run dev",
+    "frontend:prod": "npm --prefix frontend run start",
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,green\" \"npm run backend\" \"npm run frontend\"",
+    "start": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,green\" \"npm run backend:prod\" \"npm run frontend\"",
+    "seed": "npm --prefix backend run seed && npm --prefix backend run seed:dynamic",
+    "build": "npm --prefix backend run build && npm --prefix frontend run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

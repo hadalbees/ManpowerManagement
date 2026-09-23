@@ -1,0 +1,1670 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// 1. ENUMS (22 Domain State Machines)
+// ==========================================
+
+enum AgencyStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+
+  @@map("agency_status_enum")
+}
+
+enum UserStatus {
+  ACTIVE
+  LOCKED
+  INACTIVE
+
+  @@map("user_status_enum")
+}
+
+enum ClientStatus {
+  ACTIVE
+  INACTIVE
+  BLACKLISTED
+
+  @@map("client_status_enum")
+}
+
+enum ContractStatus {
+  DRAFT
+  ACTIVE
+  EXPIRED
+  TERMINATED
+
+  @@map("contract_status_enum")
+}
+
+enum BillingCycle {
+  WEEKLY
+  FORTNIGHTLY
+  MONTHLY
+  QUARTERLY
+
+  @@map("billing_cycle_enum")
+}
+
+enum BillingModel {
+  MONTHLY_FIXED
+  PER_EMPLOYEE_PER_SHIFT
+  HOURLY
+  OVERTIME
+
+  @@map("billing_model_enum")
+}
+
+enum DesignationCategory {
+  DRIVER
+  SECURITY
+  HOUSEKEEPING
+  INDUSTRIAL
+  WAREHOUSE
+  ADMINISTRATIVE
+
+  @@map("designation_category_enum")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+
+  @@map("gender_enum")
+}
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  WIDOWED
+  DIVORCED
+
+  @@map("marital_status_enum")
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  ON_LEAVE
+  SUSPENDED
+  RESIGNED
+  TERMINATED
+
+  @@map("employee_status_enum")
+}
+
+enum ProficiencyLevel {
+  BEGINNER
+  INTERMEDIATE
+  EXPERT
+
+  @@map("proficiency_enum")
+}
+
+enum AdvanceStatus {
+  ACTIVE
+  FULLY_RECOVERED
+  WRITTEN_OFF
+
+  @@map("advance_status_enum")
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+
+  @@map("leave_status_enum")
+}
+
+enum VehicleType {
+  SEDAN
+  SUV
+  BUS
+  VAN
+  TRUCK
+  AUTO
+
+  @@map("vehicle_type_enum")
+}
+
+enum FuelType {
+  DIESEL
+  PETROL
+  CNG
+  ELECTRIC
+
+  @@map("fuel_type_enum")
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  ASSIGNED
+  UNDER_MAINTENANCE
+  GROUNDED
+
+  @@map("vehicle_status_enum")
+}
+
+enum DeploymentStatus {
+  ACTIVE
+  TRANSFERRED
+  REPLACED
+  COMPLETED
+
+  @@map("deployment_status_enum")
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  HALF_DAY
+  PAID_LEAVE
+  UNPAID_LEAVE
+  WEEK_OFF
+  HOLIDAY
+
+  @@map("attendance_status_enum")
+}
+
+enum AttendanceMethod {
+  WEB_MANUAL
+  TABLET_MANUAL
+  CSV_IMPORT
+  BIOMETRIC
+  MOBILE_GPS
+
+  @@map("attendance_method_enum")
+}
+
+enum ReplacementType {
+  TEMPORARY
+  PERMANENT
+
+  @@map("replacement_type_enum")
+}
+
+enum ReplacementStatus {
+  DISPATCHED
+  COMPLETED
+  CANCELLED
+
+  @@map("replacement_status_enum")
+}
+
+enum StatutoryRuleType {
+  EPF
+  ESIC
+  PROFESSIONAL_TAX
+  LWF
+
+  @@map("statutory_rule_type_enum")
+}
+
+enum StatutoryCalcMethod {
+  PERCENTAGE_ON_GROSS
+  PERCENTAGE_ON_BASIC_DA
+  SLAB_BASED
+  FIXED_AMOUNT
+
+  @@map("statutory_calc_method_enum")
+}
+
+enum RoundingMethod {
+  NEAREST_INTEGER
+  ROUND_UP
+  ROUND_DOWN
+  EXACT
+
+  @@map("rounding_method_enum")
+}
+
+enum PayrollBatchStatus {
+  DRAFT
+  REVIEWED
+  APPROVED
+  LOCKED
+
+  @@map("payroll_batch_status_enum")
+}
+
+enum SalaryPaymentStatus {
+  PENDING
+  PAID
+  FAILED
+
+  @@map("salary_payment_status_enum")
+}
+
+enum InvoiceStatus {
+  DRAFT
+  APPROVED
+  SENT
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  CANCELLED
+
+  @@map("invoice_status_enum")
+}
+
+enum InvoiceAdjustmentType {
+  CREDIT_NOTE
+  DEBIT_NOTE
+
+  @@map("invoice_adjustment_type_enum")
+}
+
+enum PaymentMode {
+  NEFT
+  RTGS
+  CHEQUE
+  UPI
+  CASH
+
+  @@map("payment_mode_enum")
+}
+
+enum DocumentEntityType {
+  EMPLOYEE
+  VEHICLE
+  CLIENT
+  CLIENT_SITE
+  CONTRACT
+  CANDIDATE
+  AGENCY
+  BRANCH
+
+  @@map("document_entity_type_enum")
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+
+  @@map("verification_status_enum")
+}
+
+enum ExpiryAlertStatus {
+  SCHEDULED
+  SENT
+  ACKNOWLEDGED
+  RESOLVED
+
+  @@map("expiry_alert_status_enum")
+}
+
+enum RecruitmentStatus {
+  APPLIED
+  SCREENING
+  INTERVIEW_SCHEDULED
+  SKILL_TEST_PASSED
+  DOCUMENT_VERIFIED
+  SELECTED
+  OFFERED
+  HIRED
+  REJECTED
+
+  @@map("recruitment_status_enum")
+}
+
+enum CandidateOfferStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  DECLINED
+  EXPIRED
+  CANCELLED
+
+  @@map("candidate_offer_status_enum")
+}
+
+enum InterviewResult {
+  PENDING
+  PASSED
+  FAILED
+  RESCHEDULED
+
+  @@map("interview_result_enum")
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  CRITICAL
+
+  @@map("notification_priority_enum")
+}
+
+enum NotificationCategory {
+  EXPIRY
+  COMPLIANCE
+  ATTENDANCE
+  REPLACEMENT
+  PAYROLL
+  BILLING
+  RECRUITMENT
+  LEAVE
+  SYSTEM
+
+  @@map("notification_category_enum")
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  APPROVE
+  LOCK
+  OVERRIDE
+
+  @@map("audit_action_enum")
+}
+
+// ==========================================
+// 2. AGENCY & BRANCH INFRASTRUCTURE
+// ==========================================
+
+model Agency {
+  id                  String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                String       @db.VarChar(150)
+  legalName           String       @map("legal_name") @db.VarChar(200)
+  registrationNumber  String       @unique @map("registration_number") @db.VarChar(50)
+  pan                 String       @unique @db.VarChar(10)
+  gstin               String       @unique @db.VarChar(15)
+  epfCode             String?      @map("epf_code") @db.VarChar(25)
+  esicCode            String?      @map("esic_code") @db.VarChar(25)
+  linNumber           String?      @map("lin_number") @db.VarChar(20)
+  registeredAddress   String       @map("registered_address") @db.Text
+  stateCode           String       @map("state_code") @db.VarChar(2)
+  phone               String       @db.VarChar(20)
+  email               String       @db.VarChar(100)
+  website             String?      @db.VarChar(150)
+  status              AgencyStatus @default(ACTIVE)
+  createdAt           DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt           DateTime?    @map("deleted_at") @db.Timestamptz
+
+  branches            AgencyBranch[]
+  configurations      AgencyConfiguration[]
+  users               User[]
+  roles               Role[]
+  clients             Client[]
+  designations        Designation[]
+  employees           Employee[]
+  skills              Skill[]
+  leaveTypes          LeaveType[]
+  vehicles            Vehicle[]
+  deployments         EmployeeDeployment[]
+  attendances         Attendance[]
+  statutoryRules      StatutoryRule[]
+  payrollBatches      PayrollBatch[]
+  invoiceSequences    InvoiceSequence[]
+  invoices            ClientInvoice[]
+  invoiceAdjustments  InvoiceAdjustment[]
+  clientPayments      ClientPayment[]
+  documentTypes       DocumentType[]
+  documents           Document[]
+  expiryAlerts        ExpiryAlert[]
+  candidates          RecruitmentCandidate[]
+  candidateOffers     CandidateOffer[]
+  notifications       Notification[]
+  auditLogs           AuditLog[]
+
+  @@map("agencies")
+}
+
+model AgencyBranch {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId        String    @map("agency_id") @db.Uuid
+  branchName      String    @map("branch_name") @db.VarChar(100)
+  branchCode      String    @map("branch_code") @db.VarChar(10)
+  gstin           String?   @db.VarChar(15)
+  stateCode       String    @map("state_code") @db.VarChar(2)
+  city            String    @db.VarChar(50)
+  address         String    @db.Text
+  contactPerson   String    @map("contact_person") @db.VarChar(100)
+  contactPhone    String    @map("contact_phone") @db.VarChar(20)
+  contactEmail    String    @map("contact_email") @db.VarChar(100)
+  isHeadquarters  Boolean   @default(false) @map("is_headquarters")
+  isActive        Boolean   @default(true) @map("is_active")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt       DateTime? @map("deleted_at") @db.Timestamptz
+
+  agency          Agency    @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  configurations  AgencyConfiguration[]
+  users           User[]
+  clients         Client[]
+  employees       Employee[]
+  vehicles        Vehicle[]
+  deployments     EmployeeDeployment[]
+  attendances     Attendance[]
+  payrollBatches  PayrollBatch[]
+  invoiceSequences InvoiceSequence[]
+  invoices        ClientInvoice[]
+  invoiceAdjustments InvoiceAdjustment[]
+  clientPayments  ClientPayment[]
+  candidates      RecruitmentCandidate[]
+  candidateOffers     CandidateOffer[]
+  auditLogs       AuditLog[]
+
+  @@unique([agencyId, branchCode])
+  @@map("agency_branches")
+}
+
+model AgencyConfiguration {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId    String    @map("agency_id") @db.Uuid
+  branchId    String?   @map("branch_id") @db.Uuid
+  configKey   String    @map("config_key") @db.VarChar(50)
+  configValue Json      @map("config_value")
+  description String?   @db.VarChar(255)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  agency      Agency    @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  branch      AgencyBranch? @relation(fields: [branchId], references: [id], onDelete: SetNull)
+
+  @@unique([agencyId, branchId, configKey])
+  @@map("agency_configurations")
+}
+
+// ==========================================
+// 3. IDENTITY, PERMISSIONS & AUDIT
+// ==========================================
+
+model User {
+  id                   String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId             String     @map("agency_id") @db.Uuid
+  branchId             String?    @map("branch_id") @db.Uuid
+  email                String     @db.VarChar(150)
+  passwordHash         String     @map("password_hash") @db.VarChar(255)
+  fullName             String     @map("full_name") @db.VarChar(100)
+  phone                String     @db.VarChar(20)
+  roleId               String     @map("role_id") @db.Uuid
+  status               UserStatus @default(ACTIVE)
+  failedLoginAttempts  Int        @default(0) @map("failed_login_attempts")
+  lockedUntil          DateTime?  @map("locked_until") @db.Timestamptz
+  lastLoginAt          DateTime?  @map("last_login_at") @db.Timestamptz
+  lastLoginIp          String?    @map("last_login_ip") @db.VarChar(45)
+  createdAt            DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt            DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt            DateTime?  @map("deleted_at") @db.Timestamptz
+
+  agency               Agency     @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  branch               AgencyBranch? @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  role                 Role       @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  userPermissions      UserPermission[] @relation("TargetUser")
+  grantedPermissions   UserPermission[] @relation("GrantedByUser")
+  sessions             UserSession[]
+  auditLogs            AuditLog[]
+  recordedAttendances  Attendance[]     @relation("RecordedByUser")
+  approvedAttendances  Attendance[]     @relation("ApprovedByUser")
+  dispatchedReplacements Replacement[]  @relation("DispatchedByUser")
+  assignedVehicles     VehicleAssignment[] @relation("AssignedByUser")
+  approvedAdvances     SalaryAdvance[]  @relation("ApprovedAdvanceByUser")
+  reviewedLeaves       LeaveRequest[]   @relation("ReviewedLeaveByUser")
+  approvedPayroll      PayrollBatch[]   @relation("ApprovedPayrollByUser")
+  approvedInvoices     ClientInvoice[]  @relation("ApprovedInvoiceByUser")
+  approvedAdjustments  InvoiceAdjustment[] @relation("ApprovedAdjustmentByUser")
+  recordedPayments     ClientPayment[]  @relation("RecordedPaymentByUser")
+  verifiedDocuments    Document[]       @relation("VerifiedByUser")
+  uploadedDocuments    Document[]       @relation("UploadedByUser")
+  uploadedDocVersions  DocumentVersion[] @relation("DocumentVersionUploadedBy")
+  acknowledgedAlerts   ExpiryAlert[]    @relation("AcknowledgedAlertByUser")
+  conductedInterviews  CandidateInterview[] @relation("InterviewerUser")
+  screenedCandidates   RecruitmentCandidate[] @relation("ScreenedByUser")
+  notifications        Notification[]
+
+  @@unique([agencyId, email])
+  @@map("users")
+}
+
+model Role {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId        String?   @map("agency_id") @db.Uuid
+  name            String    @db.VarChar(50)
+  slug            String    @unique @db.VarChar(50)
+  description     String?   @db.VarChar(255)
+  isSystemDefault Boolean   @default(false) @map("is_system_default")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  agency          Agency?   @relation(fields: [agencyId], references: [id], onDelete: SetNull)
+  users           User[]
+  rolePermissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  module          String    @db.VarChar(40)
+  action          String    @db.VarChar(30)
+  code            String    @unique @db.VarChar(70)
+  description     String    @db.VarChar(255)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  rolePermissions RolePermission[]
+  userPermissions UserPermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String     @map("role_id") @db.Uuid
+  permissionId String     @map("permission_id") @db.Uuid
+
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model UserPermission {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String     @map("user_id") @db.Uuid
+  permissionId String     @map("permission_id") @db.Uuid
+  isGranted    Boolean    @map("is_granted")
+  grantedById  String     @map("granted_by") @db.Uuid
+  grantedAt    DateTime   @default(now()) @map("granted_at") @db.Timestamptz
+
+  user         User       @relation("TargetUser", fields: [userId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  grantedBy    User       @relation("GrantedByUser", fields: [grantedById], references: [id], onDelete: Restrict)
+
+  @@unique([userId, permissionId])
+  @@map("user_permissions")
+}
+
+model UserSession {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId           String    @map("user_id") @db.Uuid
+  refreshTokenHash String    @unique @map("refresh_token_hash") @db.VarChar(255)
+  userAgent        String?   @map("user_agent") @db.VarChar(255)
+  ipAddress        String?   @map("ip_address") @db.VarChar(45)
+  expiresAt        DateTime  @map("expires_at") @db.Timestamptz
+  isRevoked        Boolean   @default(false) @map("is_revoked")
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  lastActiveAt     DateTime  @default(now()) @map("last_active_at") @db.Timestamptz
+
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_sessions")
+}
+
+model AuditLog {
+  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId      String      @map("agency_id") @db.Uuid
+  branchId      String?     @map("branch_id") @db.Uuid
+  userId        String?     @map("user_id") @db.Uuid
+  entityName    String      @map("entity_name") @db.VarChar(60)
+  entityId      String      @map("entity_id") @db.Uuid
+  action        AuditAction
+  oldValues     Json?       @map("old_values")
+  newValues     Json?       @map("new_values")
+  changeSummary String?     @map("change_summary") @db.VarChar(255)
+  ipAddress     String?     @map("ip_address") @db.VarChar(45)
+  userAgent     String?     @map("user_agent") @db.VarChar(255)
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz
+
+  agency        Agency      @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  branch        AgencyBranch? @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  user          User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([entityName, entityId])
+  @@index([createdAt])
+  @@index([agencyId, userId])
+  @@map("audit_logs")
+}
+
+// ==========================================
+// 4. CLIENT & COMMERCIAL DOMAIN
+// ==========================================
+
+model Client {
+  id                String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId          String       @map("agency_id") @db.Uuid
+  branchId          String       @map("branch_id") @db.Uuid
+  clientCode        String       @map("client_code") @db.VarChar(20)
+  companyName       String       @map("company_name") @db.VarChar(150)
+  legalName         String       @map("legal_name") @db.VarChar(200)
+  pan               String       @db.VarChar(10)
+  gstin             String       @db.VarChar(15)
+  stateCode         String       @map("state_code") @db.VarChar(2)
+  billingAddress    String       @map("billing_address") @db.Text
+  contactPersonName String       @map("contact_person_name") @db.VarChar(100)
+  contactEmail      String       @map("contact_email") @db.VarChar(100)
+  contactPhone      String       @map("contact_phone") @db.VarChar(20)
+  paymentTermsDays  Int          @default(30) @map("payment_terms_days")
+  status            ClientStatus @default(ACTIVE)
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt         DateTime?    @map("deleted_at") @db.Timestamptz
+
+  agency            Agency       @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  branch            AgencyBranch @relation(fields: [branchId], references: [id], onDelete: Restrict)
+
+  sites             ClientSite[]
+  contracts         ClientContract[]
+  billingRates      ClientBillingRate[]
+  vehicles          Vehicle[]
+  deployments       EmployeeDeployment[]
+  attendances       Attendance[]
+  invoices          ClientInvoice[]
+  payments          ClientPayment[]
+
+  @@unique([agencyId, clientCode])
+  @@unique([agencyId, gstin])
+  @@map("clients")
+}
+
+model ClientSite {
+  id                  String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clientId            String       @map("client_id") @db.Uuid
+  siteCode            String       @map("site_code") @db.VarChar(20)
+  siteName            String       @map("site_name") @db.VarChar(120)
+  address             String       @db.Text
+  city                String       @db.VarChar(50)
+  stateCode           String       @map("state_code") @db.VarChar(2)
+  pincode             String       @db.VarChar(10)
+  siteSupervisorName  String?      @map("site_supervisor_name") @db.VarChar(100)
+  siteSupervisorPhone String?      @map("site_supervisor_phone") @db.VarChar(20)
+  isActive            Boolean      @default(true) @map("is_active")
+  createdAt           DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt           DateTime?    @map("deleted_at") @db.Timestamptz
+
+  client              Client       @relation(fields: [clientId], references: [id], onDelete: Restrict)
+
+  billingRates        ClientBillingRate[]
+  deployments         EmployeeDeployment[]
+  attendances         Attendance[]
+  invoiceItems        ClientInvoiceItem[]
+  vehicleAssignments  VehicleAssignment[]
+
+  @@unique([clientId, siteCode])
+  @@map("client_sites")
+}
+
+model ClientContract {
+  id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clientId         String         @map("client_id") @db.Uuid
+  contractNumber   String         @map("contract_number") @db.VarChar(50)
+  title            String         @db.VarChar(150)
+  startDate        DateTime       @map("start_date") @db.Date
+  endDate          DateTime       @map("end_date") @db.Date
+  noticePeriodDays Int            @default(30) @map("notice_period_days")
+  billingCycle     BillingCycle   @default(MONTHLY) @map("billing_cycle")
+  status           ContractStatus @default(ACTIVE)
+  autoRenew        Boolean        @default(false) @map("auto_renew")
+  notes            String?        @db.Text
+  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt        DateTime?      @map("deleted_at") @db.Timestamptz
+
+  client           Client         @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  invoices         ClientInvoice[]
+
+  @@unique([clientId, contractNumber])
+  @@map("client_contracts")
+}
+
+model ClientBillingRate {
+  id                 String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clientId           String       @map("client_id") @db.Uuid
+  clientSiteId       String?      @map("client_site_id") @db.Uuid
+  designationId      String       @map("designation_id") @db.Uuid
+  billingModel       BillingModel @map("billing_model")
+  rateAmount         Decimal      @map("rate_amount") @db.Decimal(12, 2)
+  standardShiftHours Decimal      @default(8.00) @map("standard_shift_hours") @db.Decimal(4, 2)
+  otHourlyRate       Decimal      @default(0.00) @map("ot_hourly_rate") @db.Decimal(10, 2)
+  effectiveFrom      DateTime     @map("effective_from") @db.Date
+  effectiveTo        DateTime?    @map("effective_to") @db.Date
+  isActive           Boolean      @default(true) @map("is_active")
+  createdAt          DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt          DateTime?    @map("deleted_at") @db.Timestamptz
+
+  client             Client       @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  clientSite         ClientSite?  @relation(fields: [clientSiteId], references: [id], onDelete: SetNull)
+  designation        Designation  @relation(fields: [designationId], references: [id], onDelete: Restrict)
+
+  deployments        EmployeeDeployment[]
+  invoiceItems       ClientInvoiceItem[]
+
+  @@map("client_billing_rates")
+}
+
+// ==========================================
+// 5. WORKFORCE & HUMAN RESOURCES
+// ==========================================
+
+model Designation {
+  id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId            String              @map("agency_id") @db.Uuid
+  name                String              @db.VarChar(80)
+  code                String              @db.VarChar(20)
+  category            DesignationCategory
+  description         String?             @db.VarChar(255)
+  minimumWageCategory String?             @map("minimum_wage_category") @db.VarChar(40)
+  isActive            Boolean             @default(true) @map("is_active")
+  createdAt           DateTime            @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt           DateTime?           @map("deleted_at") @db.Timestamptz
+
+  agency              Agency              @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+
+  employees           Employee[]
+  billingRates        ClientBillingRate[]
+  deployments         EmployeeDeployment[]
+  invoiceItems        ClientInvoiceItem[]
+  candidates          RecruitmentCandidate[]
+  candidateOffers     CandidateOffer[]
+
+  @@unique([agencyId, code])
+  @@map("designations")
+}
+
+model Employee {
+  id                     String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId               String         @map("agency_id") @db.Uuid
+  branchId               String         @map("branch_id") @db.Uuid
+  employeeCode           String         @map("employee_code") @db.VarChar(20)
+  firstName              String         @map("first_name") @db.VarChar(60)
+  lastName               String         @map("last_name") @db.VarChar(60)
+  gender                 Gender
+  dateOfBirth            DateTime       @map("date_of_birth") @db.Date
+  dateOfJoining          DateTime       @map("date_of_joining") @db.Date
+  dateOfLeaving          DateTime?      @map("date_of_leaving") @db.Date
+  primaryDesignationId   String         @map("primary_designation_id") @db.Uuid
+  phone                  String         @db.VarChar(20)
+  alternatePhone         String?        @map("alternate_phone") @db.VarChar(20)
+  email                  String?        @db.VarChar(120)
+  drivingLicenseNumber   String?        @map("driving_license_number") @db.VarChar(30)
+  drivingLicenseClass    String?        @map("driving_license_class") @db.VarChar(30)
+  drivingLicenseIssueDate DateTime?     @map("driving_license_issue_date") @db.Date
+  drivingLicenseExpiryDate DateTime?    @map("driving_license_expiry_date") @db.Date
+  drivingLicenseAuthority String?       @map("driving_license_authority") @db.VarChar(80)
+  emergencyContactName   String         @map("emergency_contact_name") @db.VarChar(100)
+  emergencyContactPhone  String         @map("emergency_contact_phone") @db.VarChar(20)
+  currentAddress         String         @map("current_address") @db.Text
+  permanentAddress       String         @map("permanent_address") @db.Text
+  maritalStatus          MaritalStatus? @map("marital_status")
+  bloodGroup             String?        @map("blood_group") @db.VarChar(5)
+  bankName               String         @map("bank_name") @db.VarChar(100)
+  bankBranch             String         @map("bank_branch") @db.VarChar(100)
+  bankAccountNoEncrypted String         @map("bank_account_no_encrypted") @db.VarChar(255)
+  bankAccountNoMasked    String         @map("bank_account_no_masked") @db.VarChar(20)
+  bankIfsc               String         @map("bank_ifsc") @db.VarChar(11)
+  panEncrypted           String?        @map("pan_encrypted") @db.VarChar(255)
+  panMasked              String?        @map("pan_masked") @db.VarChar(10)
+  aadhaarEncrypted       String         @map("aadhaar_encrypted") @db.VarChar(255)
+  aadhaarMasked          String         @map("aadhaar_masked") @db.VarChar(12)
+  uanNumber              String?        @map("uan_number") @db.VarChar(12)
+  esicIpNumber           String?        @map("esic_ip_number") @db.VarChar(17)
+  recruitedCandidateId   String?        @map("recruited_candidate_id") @db.Uuid
+  status                 EmployeeStatus @default(ACTIVE)
+  createdAt              DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt              DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt              DateTime?      @map("deleted_at") @db.Timestamptz
+
+  agency                 Agency         @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  branch                 AgencyBranch   @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  primaryDesignation     Designation    @relation(fields: [primaryDesignationId], references: [id], onDelete: Restrict)
+  recruitedCandidate     RecruitmentCandidate? @relation("CandidateConversion", fields: [recruitedCandidateId], references: [id], onDelete: SetNull)
+
+  skills                 EmployeeSkill[]
+  qualifications         EmployeeQualification[]
+  salaryStructures       EmployeeSalaryStructure[]
+  salaryAdvances         SalaryAdvance[]
+  leaveBalances          LeaveBalance[]
+  leaveRequests          LeaveRequest[]
+  vehicleAssignments     VehicleAssignment[]
+  deployments            EmployeeDeployment[]
+  attendances            Attendance[]
+  replacementsAsAbsent   Replacement[]  @relation("AbsentEmployee")
+  replacementsAsSub      Replacement[]  @relation("ReplacementEmployee")
+  salaryCalculations     SalaryCalculation[]
+  payslips               Payslip[]
+
+  @@unique([agencyId, employeeCode])
+  @@map("employees")
+}
+
+model Skill {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId  String   @map("agency_id") @db.Uuid
+  name      String   @db.VarChar(80)
+  category  String   @db.VarChar(50)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  agency    Agency   @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  employees EmployeeSkill[]
+
+  @@unique([agencyId, name])
+  @@map("skills")
+}
+
+model EmployeeSkill {
+  employeeId        String           @map("employee_id") @db.Uuid
+  skillId           String           @map("skill_id") @db.Uuid
+  proficiencyLevel  ProficiencyLevel @default(INTERMEDIATE) @map("proficiency_level")
+  yearsOfExperience Decimal          @default(0.0) @map("years_of_experience") @db.Decimal(3, 1)
+  certified         Boolean          @default(false)
+
+  employee          Employee         @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  skill             Skill            @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([employeeId, skillId])
+  @@map("employee_skills")
+}
+
+model EmployeeQualification {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employeeId        String   @map("employee_id") @db.Uuid
+  qualificationType String   @map("qualification_type") @db.VarChar(50)
+  degreeTitle       String   @map("degree_title") @db.VarChar(100)
+  institutionName   String   @map("institution_name") @db.VarChar(150)
+  yearOfPassing     Int      @map("year_of_passing")
+  gradePercentage   String?  @map("grade_percentage") @db.VarChar(15)
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  employee          Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("employee_qualifications")
+}
+
+model EmployeeSalaryStructure {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employeeId           String    @map("employee_id") @db.Uuid
+  basicPay             Decimal   @map("basic_pay") @db.Decimal(10, 2)
+  dearnessAllowance    Decimal   @default(0.00) @map("dearness_allowance") @db.Decimal(10, 2)
+  houseRentAllowance   Decimal   @default(0.00) @map("house_rent_allowance") @db.Decimal(10, 2)
+  conveyanceAllowance  Decimal   @default(0.00) @map("conveyance_allowance") @db.Decimal(10, 2)
+  specialAllowance     Decimal   @default(0.00) @map("special_allowance") @db.Decimal(10, 2)
+  overtimeRatePerHour  Decimal   @default(0.00) @map("overtime_rate_per_hour") @db.Decimal(8, 2)
+  pfApplicable         Boolean   @default(true) @map("pf_applicable")
+  pfOptOutRule         String?   @map("pf_opt_out_rule") @db.VarChar(30)
+  esiApplicable        Boolean   @default(true) @map("esi_applicable")
+  ptApplicable         Boolean   @default(true) @map("pt_applicable")
+  lwfApplicable        Boolean   @default(true) @map("lwf_applicable")
+  effectiveFrom        DateTime  @map("effective_from") @db.Date
+  effectiveTo          DateTime? @map("effective_to") @db.Date
+  reasonForChange      String?   @map("reason_for_change") @db.VarChar(255)
+  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt            DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt            DateTime? @map("deleted_at") @db.Timestamptz
+
+  employee             Employee  @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  deployments          EmployeeDeployment[]
+  salaryCalculations   SalaryCalculation[]
+
+  @@map("employee_salary_structures")
+}
+
+model SalaryAdvance {
+  id                     String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employeeId             String        @map("employee_id") @db.Uuid
+  advanceAmount          Decimal       @map("advance_amount") @db.Decimal(10, 2)
+  disbursedDate          DateTime      @map("disbursed_date") @db.Date
+  repaymentStartMonth    Int           @map("repayment_start_month")
+  repaymentStartYear     Int           @map("repayment_start_year")
+  totalInstallments      Int           @default(1) @map("total_installments")
+  monthlyDeductionAmount Decimal       @map("monthly_deduction_amount") @db.Decimal(10, 2)
+  recoveredAmount        Decimal       @default(0.00) @map("recovered_amount") @db.Decimal(10, 2)
+  balanceRemaining       Decimal       @map("balance_remaining") @db.Decimal(10, 2)
+  status                 AdvanceStatus @default(ACTIVE)
+  approvedById           String        @map("approved_by") @db.Uuid
+  notes                  String?       @db.VarChar(255)
+  createdAt              DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt              DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  employee               Employee      @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  approvedBy             User          @relation("ApprovedAdvanceByUser", fields: [approvedById], references: [id], onDelete: Restrict)
+
+  @@map("salary_advances")
+}
+
+model LeaveType {
+  id             String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId       String         @map("agency_id") @db.Uuid
+  name           String         @db.VarChar(50)
+  code           String         @db.VarChar(15)
+  daysPerYear    Decimal        @default(0.0) @map("days_per_year") @db.Decimal(4, 1)
+  isPaid         Boolean        @default(true) @map("is_paid")
+  isAccumulative Boolean        @default(false) @map("is_accumulative")
+  isActive       Boolean        @default(true) @map("is_active")
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz
+
+  agency         Agency         @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  leaveBalances  LeaveBalance[]
+  leaveRequests  LeaveRequest[]
+
+  @@unique([agencyId, code])
+  @@map("leave_types")
+}
+
+model LeaveBalance {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employeeId     String    @map("employee_id") @db.Uuid
+  leaveTypeId    String    @map("leave_type_id") @db.Uuid
+  year           Int
+  openingBalance Decimal   @default(0.0) @map("opening_balance") @db.Decimal(4, 1)
+  accruedDays    Decimal   @default(0.0) @map("accrued_days") @db.Decimal(4, 1)
+  consumedDays   Decimal   @default(0.0) @map("consumed_days") @db.Decimal(4, 1)
+  closingBalance Decimal   @default(0.0) @map("closing_balance") @db.Decimal(4, 1)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  employee       Employee  @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  leaveType      LeaveType @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+
+  @@unique([employeeId, leaveTypeId, year])
+  @@map("leave_balances")
+}
+
+model LeaveRequest {
+  id               String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employeeId       String      @map("employee_id") @db.Uuid
+  leaveTypeId      String      @map("leave_type_id") @db.Uuid
+  startDate        DateTime    @map("start_date") @db.Date
+  endDate          DateTime    @map("end_date") @db.Date
+  totalDays        Decimal     @map("total_days") @db.Decimal(4, 1)
+  reason           String      @db.Text
+  status           LeaveStatus @default(PENDING)
+  reviewedById     String?     @map("reviewed_by") @db.Uuid
+  reviewedAt       DateTime?   @map("reviewed_at") @db.Timestamptz
+  reviewerComments String?     @map("reviewer_comments") @db.VarChar(255)
+  createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt        DateTime?   @map("deleted_at") @db.Timestamptz
+
+  employee         Employee    @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  leaveType        LeaveType   @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+  reviewedBy       User?       @relation("ReviewedLeaveByUser", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@map("leave_requests")
+}
+
+// ==========================================
+// 6. FLEET & VEHICLE DOMAIN
+// ==========================================
+
+model Vehicle {
+  id                        String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId                  String        @map("agency_id") @db.Uuid
+  branchId                  String        @map("branch_id") @db.Uuid
+  clientId                  String?       @map("client_id") @db.Uuid
+  vehicleRegistrationNumber String        @map("vehicle_registration_number") @db.VarChar(20)
+  vehicleMake               String        @map("vehicle_make") @db.VarChar(50)
+  vehicleModel              String        @map("vehicle_model") @db.VarChar(50)
+  vehicleType               VehicleType   @map("vehicle_type")
+  fuelType                  FuelType      @map("fuel_type")
+  chassisNumber             String        @map("chassis_number") @db.VarChar(50)
+  engineNumber              String        @map("engine_number") @db.VarChar(50)
+  manufacturingYear         Int           @map("manufacturing_year")
+  currentOdometerKm         Int           @default(0) @map("current_odometer_km")
+  status                    VehicleStatus @default(AVAILABLE)
+  createdAt                 DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt                 DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt                 DateTime?     @map("deleted_at") @db.Timestamptz
+
+  agency                    Agency        @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  branch                    AgencyBranch  @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  client                    Client?       @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  assignments               VehicleAssignment[]
+  deployments               EmployeeDeployment[]
+
+  @@unique([agencyId, vehicleRegistrationNumber])
+  @@map("vehicles")
+}
+
+model VehicleAssignment {
+  id                     String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  vehicleId              String       @map("vehicle_id") @db.Uuid
+  employeeId             String       @map("employee_id") @db.Uuid
+  clientSiteId           String?      @map("client_site_id") @db.Uuid
+  startDatetime          DateTime     @map("start_datetime") @db.Timestamptz
+  endDatetime            DateTime?    @map("end_datetime") @db.Timestamptz
+  startOdometerKm        Int          @map("start_odometer_km")
+  endOdometerKm          Int?         @map("end_odometer_km")
+  handoverConditionNotes String?      @map("handover_condition_notes") @db.Text
+  returnConditionNotes   String?      @map("return_condition_notes") @db.Text
+  reasonForChange        String?      @map("reason_for_change") @db.VarChar(255)
+  assignedById           String       @map("assigned_by") @db.Uuid
+  createdAt              DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt              DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt              DateTime?    @map("deleted_at") @db.Timestamptz
+
+  vehicle                Vehicle      @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
+  employee               Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  clientSite             ClientSite?  @relation(fields: [clientSiteId], references: [id], onDelete: SetNull)
+  assignedBy             User         @relation("AssignedByUser", fields: [assignedById], references: [id], onDelete: Restrict)
+
+  @@map("vehicle_assignments")
+}
+
+// ==========================================
+// 7. OPERATIONS, ROSTERING & ATTENDANCE
+// ==========================================
+
+model EmployeeDeployment {
+  id                String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId          String           @map("agency_id") @db.Uuid
+  branchId          String           @map("branch_id") @db.Uuid
+  employeeId        String           @map("employee_id") @db.Uuid
+  clientId          String           @map("client_id") @db.Uuid
+  clientSiteId      String           @map("client_site_id") @db.Uuid
+  designationId     String           @map("designation_id") @db.Uuid
+  shiftName         String           @default("GENERAL") @map("shift_name") @db.VarChar(40)
+  shiftStartTime    DateTime         @default(dbgenerated("'09:00:00'::time")) @map("shift_start_time") @db.Time
+  shiftEndTime      DateTime         @default(dbgenerated("'18:00:00'::time")) @map("shift_end_time") @db.Time
+  isNightShift      Boolean          @default(false) @map("is_night_shift")
+  startDate         DateTime         @map("start_date") @db.Date
+  endDate           DateTime?        @map("end_date") @db.Date
+  billingRateId     String           @map("billing_rate_id") @db.Uuid
+  salaryStructureId String           @map("salary_structure_id") @db.Uuid
+  vehicleId         String?          @map("vehicle_id") @db.Uuid
+  status            DeploymentStatus @default(ACTIVE)
+  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt         DateTime?        @map("deleted_at") @db.Timestamptz
+
+  agency            Agency           @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  branch            AgencyBranch     @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  employee          Employee         @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  client            Client           @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  clientSite        ClientSite       @relation(fields: [clientSiteId], references: [id], onDelete: Restrict)
+  designation       Designation      @relation(fields: [designationId], references: [id], onDelete: Restrict)
+  billingRate       ClientBillingRate @relation(fields: [billingRateId], references: [id], onDelete: Restrict)
+  salaryStructure   EmployeeSalaryStructure @relation(fields: [salaryStructureId], references: [id], onDelete: Restrict)
+  vehicle           Vehicle?         @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+
+  shifts            DeploymentShift[]
+  attendances       Attendance[]
+  replacements      Replacement[]
+
+  @@map("employee_deployments")
+}
+
+model DeploymentShift {
+  id                 String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  deploymentId       String             @map("deployment_id") @db.Uuid
+  dayOfWeek          Int                @map("day_of_week")
+  isScheduledWorkday Boolean            @default(true) @map("is_scheduled_workday")
+
+  deployment         EmployeeDeployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+
+  @@unique([deploymentId, dayOfWeek])
+  @@map("deployment_shifts")
+}
+
+model Attendance {
+  id                String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId          String           @map("agency_id") @db.Uuid
+  branchId          String           @map("branch_id") @db.Uuid
+  employeeId        String           @map("employee_id") @db.Uuid
+  deploymentId      String           @map("deployment_id") @db.Uuid
+  clientId          String           @map("client_id") @db.Uuid
+  clientSiteId      String           @map("client_site_id") @db.Uuid
+  shiftBusinessDate DateTime         @map("shift_business_date") @db.Date
+  clockInTime       DateTime?        @map("clock_in_time") @db.Timestamptz
+  clockOutTime      DateTime?        @map("clock_out_time") @db.Timestamptz
+  status            AttendanceStatus @default(PRESENT)
+  scheduledHours    Decimal          @default(8.00) @map("scheduled_hours") @db.Decimal(4, 2)
+  workedHours       Decimal          @default(8.00) @map("worked_hours") @db.Decimal(4, 2)
+  overtimeHours     Decimal          @default(0.00) @map("overtime_hours") @db.Decimal(4, 2)
+  recordedMethod    AttendanceMethod @default(WEB_MANUAL) @map("recorded_method")
+  recordedById      String           @map("recorded_by") @db.Uuid
+  supervisorRemarks String?          @map("supervisor_remarks") @db.VarChar(255)
+  isApproved        Boolean          @default(false) @map("is_approved")
+  approvedById      String?          @map("approved_by") @db.Uuid
+  isLocked          Boolean          @default(false) @map("is_locked")
+  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  agency            Agency           @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  branch            AgencyBranch     @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  employee          Employee         @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  deployment        EmployeeDeployment @relation(fields: [deploymentId], references: [id], onDelete: Restrict)
+  client            Client           @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  clientSite        ClientSite       @relation(fields: [clientSiteId], references: [id], onDelete: Restrict)
+  recordedBy        User             @relation("RecordedByUser", fields: [recordedById], references: [id], onDelete: Restrict)
+  approvedBy        User?            @relation("ApprovedByUser", fields: [approvedById], references: [id], onDelete: SetNull)
+
+  @@unique([employeeId, shiftBusinessDate])
+  @@index([shiftBusinessDate, clientId])
+  @@index([deploymentId, shiftBusinessDate])
+  @@map("attendances")
+}
+
+model Replacement {
+  id                    String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  originalDeploymentId  String            @map("original_deployment_id") @db.Uuid
+  absentEmployeeId      String            @map("absent_employee_id") @db.Uuid
+  replacementEmployeeId String            @map("replacement_employee_id") @db.Uuid
+  startDate             DateTime          @map("start_date") @db.Date
+  endDate               DateTime          @map("end_date") @db.Date
+  replacementType       ReplacementType   @map("replacement_type")
+  reason                String            @db.Text
+  status                ReplacementStatus @default(DISPATCHED)
+  dispatchedById        String            @map("dispatched_by") @db.Uuid
+  createdAt             DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  originalDeployment    EmployeeDeployment @relation(fields: [originalDeploymentId], references: [id], onDelete: Restrict)
+  absentEmployee        Employee          @relation("AbsentEmployee", fields: [absentEmployeeId], references: [id], onDelete: Restrict)
+  replacementEmployee   Employee          @relation("ReplacementEmployee", fields: [replacementEmployeeId], references: [id], onDelete: Restrict)
+  dispatchedBy          User              @relation("DispatchedByUser", fields: [dispatchedById], references: [id], onDelete: Restrict)
+
+  @@map("replacements")
+}
+
+// ==========================================
+// 8. STATUTORY & PAYROLL ENGINE
+// ==========================================
+
+model StatutoryRule {
+  id                      String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId                String              @map("agency_id") @db.Uuid
+  ruleType                StatutoryRuleType   @map("rule_type")
+  stateCode               String?             @map("state_code") @db.VarChar(2)
+  effectiveFrom           DateTime            @map("effective_from") @db.Date
+  effectiveTo             DateTime?           @map("effective_to") @db.Date
+  wageCeiling             Decimal?            @map("wage_ceiling") @db.Decimal(10, 2)
+  employeeContributionPct Decimal             @map("employee_contribution_pct") @db.Decimal(5, 3)
+  employerContributionPct Decimal             @map("employer_contribution_pct") @db.Decimal(5, 3)
+  calculationMethod       StatutoryCalcMethod @map("calculation_method")
+  roundingMethod          RoundingMethod      @default(NEAREST_INTEGER) @map("rounding_method")
+  ruleConfig              Json                @map("rule_config")
+  isActive                Boolean             @default(true) @map("is_active")
+  createdAt               DateTime            @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt               DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  agency                  Agency              @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+
+  @@map("statutory_rules")
+}
+
+model PayrollBatch {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId         String             @map("agency_id") @db.Uuid
+  branchId         String             @map("branch_id") @db.Uuid
+  batchNumber      String             @unique @map("batch_number") @db.VarChar(30)
+  month            Int
+  year             Int
+  totalEmployees   Int                @default(0) @map("total_employees")
+  totalGrossWages  Decimal            @default(0.00) @map("total_gross_wages") @db.Decimal(14, 2)
+  totalDeductions  Decimal            @default(0.00) @map("total_deductions") @db.Decimal(14, 2)
+  totalNetWages    Decimal            @default(0.00) @map("total_net_wages") @db.Decimal(14, 2)
+  status           PayrollBatchStatus @default(DRAFT)
+  approvedById     String?            @map("approved_by") @db.Uuid
+  approvedAt       DateTime?          @map("approved_at") @db.Timestamptz
+  lockedAt         DateTime?          @map("locked_at") @db.Timestamptz
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  agency           Agency             @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  branch           AgencyBranch       @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  approvedBy       User?              @relation("ApprovedPayrollByUser", fields: [approvedById], references: [id], onDelete: SetNull)
+
+  calculations     SalaryCalculation[]
+
+  @@unique([branchId, month, year])
+  @@map("payroll_batches")
+}
+
+model SalaryCalculation {
+  id                    String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  payrollBatchId        String              @map("payroll_batch_id") @db.Uuid
+  employeeId            String              @map("employee_id") @db.Uuid
+  salaryStructureId     String              @map("salary_structure_id") @db.Uuid
+  month                 Int
+  year                  Int
+  totalCalendarDays     Int                 @map("total_calendar_days")
+  presentDays           Decimal             @map("present_days") @db.Decimal(4, 1)
+  paidLeaveDays         Decimal             @map("paid_leave_days") @db.Decimal(4, 1)
+  unpaidLeaveDays       Decimal             @map("unpaid_leave_days") @db.Decimal(4, 1)
+  weekOffDays           Decimal             @map("week_off_days") @db.Decimal(4, 1)
+  payableDays           Decimal             @map("payable_days") @db.Decimal(4, 1)
+  overtimeHours         Decimal             @default(0.00) @map("overtime_hours") @db.Decimal(5, 2)
+  basicEarned           Decimal             @map("basic_earned") @db.Decimal(10, 2)
+  daEarned              Decimal             @map("da_earned") @db.Decimal(10, 2)
+  hraEarned             Decimal             @map("hra_earned") @db.Decimal(10, 2)
+  conveyanceEarned      Decimal             @map("conveyance_earned") @db.Decimal(10, 2)
+  specialAllowanceEarned Decimal            @map("special_allowance_earned") @db.Decimal(10, 2)
+  overtimeAmount        Decimal             @default(0.00) @map("overtime_amount") @db.Decimal(10, 2)
+  grossSalary           Decimal             @map("gross_salary") @db.Decimal(10, 2)
+  epfEmployee           Decimal             @default(0.00) @map("epf_employee") @db.Decimal(10, 2)
+  epfEmployer           Decimal             @default(0.00) @map("epf_employer") @db.Decimal(10, 2)
+  epfEpsEmployer        Decimal             @default(0.00) @map("epf_eps_employer") @db.Decimal(10, 2)
+  esicEmployee          Decimal             @default(0.00) @map("esic_employee") @db.Decimal(10, 2)
+  esicEmployer          Decimal             @default(0.00) @map("esic_employer") @db.Decimal(10, 2)
+  professionalTax       Decimal             @default(0.00) @map("professional_tax") @db.Decimal(8, 2)
+  lwfEmployee           Decimal             @default(0.00) @map("lwf_employee") @db.Decimal(8, 2)
+  advanceDeduction      Decimal             @default(0.00) @map("advance_deduction") @db.Decimal(10, 2)
+  otherDeductions       Decimal             @default(0.00) @map("other_deductions") @db.Decimal(10, 2)
+  totalDeductions       Decimal             @map("total_deductions") @db.Decimal(10, 2)
+  netSalary             Decimal             @map("net_salary") @db.Decimal(10, 2)
+  bankAccountNoSnapshot String              @map("bank_account_no_snapshot") @db.VarChar(20)
+  bankIfscSnapshot      String              @map("bank_ifsc_snapshot") @db.VarChar(11)
+  paymentStatus         SalaryPaymentStatus @default(PENDING) @map("payment_status")
+  createdAt             DateTime            @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  payrollBatch          PayrollBatch        @relation(fields: [payrollBatchId], references: [id], onDelete: Restrict)
+  employee              Employee            @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  salaryStructure       EmployeeSalaryStructure @relation(fields: [salaryStructureId], references: [id], onDelete: Restrict)
+
+  payslip               Payslip?
+
+  @@unique([payrollBatchId, employeeId])
+  @@index([employeeId, year, month])
+  @@map("salary_calculations")
+}
+
+model Payslip {
+  id                  String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  salaryCalculationId String            @unique @map("salary_calculation_id") @db.Uuid
+  employeeId          String            @map("employee_id") @db.Uuid
+  payslipNumber       String            @unique @map("payslip_number") @db.VarChar(35)
+  month               Int
+  year                Int
+  snapshotData        Json              @map("snapshot_data")
+  pdfStorageKey       String?           @map("pdf_storage_key") @db.VarChar(255)
+  isPublished         Boolean           @default(false) @map("is_published")
+  publishedAt         DateTime?         @map("published_at") @db.Timestamptz
+  createdAt           DateTime          @default(now()) @map("created_at") @db.Timestamptz
+
+  salaryCalculation   SalaryCalculation @relation(fields: [salaryCalculationId], references: [id], onDelete: Restrict)
+  employee            Employee          @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@map("payslips")
+}
+
+// ==========================================
+// 9. CLIENT BILLING & INVOICING
+// ==========================================
+
+model InvoiceSequence {
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId      String       @map("agency_id") @db.Uuid
+  branchId      String       @map("branch_id") @db.Uuid
+  financialYear String       @map("financial_year") @db.VarChar(7)
+  documentType  String       @map("document_type") @db.VarChar(10)
+  lastSequence  Int          @default(0) @map("last_sequence")
+  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  agency        Agency       @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  branch        AgencyBranch @relation(fields: [branchId], references: [id], onDelete: Restrict)
+
+  @@unique([branchId, financialYear, documentType])
+  @@map("invoice_sequences")
+}
+
+model ClientInvoice {
+  id                    String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId              String             @map("agency_id") @db.Uuid
+  branchId              String             @map("branch_id") @db.Uuid
+  clientId              String             @map("client_id") @db.Uuid
+  contractId            String?            @map("contract_id") @db.Uuid
+  invoiceNumber         String             @unique @map("invoice_number") @db.VarChar(35)
+  invoiceDate           DateTime           @map("invoice_date") @db.Date
+  dueDate               DateTime           @map("due_date") @db.Date
+  billingPeriodStart    DateTime           @map("billing_period_start") @db.Date
+  billingPeriodEnd      DateTime           @map("billing_period_end") @db.Date
+  subtotalAmount        Decimal            @map("subtotal_amount") @db.Decimal(14, 2)
+  isInterstate          Boolean            @default(false) @map("is_interstate")
+  cgstRate              Decimal            @default(0.00) @map("cgst_rate") @db.Decimal(5, 2)
+  cgstAmount            Decimal            @default(0.00) @map("cgst_amount") @db.Decimal(12, 2)
+  sgstRate              Decimal            @default(0.00) @map("sgst_rate") @db.Decimal(5, 2)
+  sgstAmount            Decimal            @default(0.00) @map("sgst_amount") @db.Decimal(12, 2)
+  igstRate              Decimal            @default(0.00) @map("igst_rate") @db.Decimal(5, 2)
+  igstAmount            Decimal            @default(0.00) @map("igst_amount") @db.Decimal(12, 2)
+  totalTaxAmount        Decimal            @default(0.00) @map("total_tax_amount") @db.Decimal(12, 2)
+  roundOff              Decimal            @default(0.00) @map("round_off") @db.Decimal(5, 2)
+  totalInvoiceAmount    Decimal            @map("total_invoice_amount") @db.Decimal(14, 2)
+  paidAmount            Decimal            @default(0.00) @map("paid_amount") @db.Decimal(14, 2)
+  creditAdjustmentAmount Decimal           @default(0.00) @map("credit_adjustment_amount") @db.Decimal(14, 2)
+  balanceDue            Decimal            @map("balance_due") @db.Decimal(14, 2)
+  status                InvoiceStatus      @default(DRAFT)
+  isLocked              Boolean            @default(false) @map("is_locked")
+  approvedById          String?            @map("approved_by") @db.Uuid
+  pdfStorageKey         String?            @map("pdf_storage_key") @db.VarChar(255)
+  createdAt             DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt             DateTime?          @map("deleted_at") @db.Timestamptz
+
+  agency                Agency             @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  branch                AgencyBranch       @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  client                Client             @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  contract              ClientContract?    @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  approvedBy            User?              @relation("ApprovedInvoiceByUser", fields: [approvedById], references: [id], onDelete: SetNull)
+
+  items                 ClientInvoiceItem[]
+  adjustments           InvoiceAdjustment[]
+  payments              ClientPayment[]
+
+  @@index([clientId, status])
+  @@index([branchId, invoiceDate])
+  @@map("client_invoices")
+}
+
+model ClientInvoiceItem {
+  id                     String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  invoiceId              String       @map("invoice_id") @db.Uuid
+  clientSiteId           String       @map("client_site_id") @db.Uuid
+  designationId          String       @map("designation_id") @db.Uuid
+  billingRateId          String       @map("billing_rate_id") @db.Uuid
+  description            String       @db.VarChar(255)
+  billingModel           BillingModel @map("billing_model")
+  quantityShiftsOrHours  Decimal      @map("quantity_shifts_or_hours") @db.Decimal(8, 2)
+  rateApplied            Decimal      @map("rate_applied") @db.Decimal(10, 2)
+  overtimeHours          Decimal      @default(0.00) @map("overtime_hours") @db.Decimal(8, 2)
+  overtimeRate           Decimal      @default(0.00) @map("overtime_rate") @db.Decimal(10, 2)
+  lineTotal              Decimal      @map("line_total") @db.Decimal(12, 2)
+  createdAt              DateTime     @default(now()) @map("created_at") @db.Timestamptz
+
+  invoice                ClientInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  clientSite             ClientSite    @relation(fields: [clientSiteId], references: [id], onDelete: Restrict)
+  designation            Designation   @relation(fields: [designationId], references: [id], onDelete: Restrict)
+  billingRate            ClientBillingRate @relation(fields: [billingRateId], references: [id], onDelete: Restrict)
+
+  @@map("client_invoice_items")
+}
+
+model InvoiceAdjustment {
+  id             String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId       String                @map("agency_id") @db.Uuid
+  branchId       String                @map("branch_id") @db.Uuid
+  invoiceId      String                @map("invoice_id") @db.Uuid
+  noteNumber     String                @unique @map("note_number") @db.VarChar(35)
+  noteType       InvoiceAdjustmentType @map("note_type")
+  issueDate      DateTime              @map("issue_date") @db.Date
+  reason         String                @db.VarChar(255)
+  subtotalAmount Decimal               @map("subtotal_amount") @db.Decimal(12, 2)
+  cgstAmount     Decimal               @default(0.00) @map("cgst_amount") @db.Decimal(10, 2)
+  sgstAmount     Decimal               @default(0.00) @map("sgst_amount") @db.Decimal(10, 2)
+  igstAmount     Decimal               @default(0.00) @map("igst_amount") @db.Decimal(10, 2)
+  totalAmount    Decimal               @map("total_amount") @db.Decimal(12, 2)
+  approvedById   String                @map("approved_by") @db.Uuid
+  createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz
+
+  agency         Agency                @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  branch         AgencyBranch          @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  invoice        ClientInvoice         @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  approvedBy     User                  @relation("ApprovedAdjustmentByUser", fields: [approvedById], references: [id], onDelete: Restrict)
+
+  @@map("invoice_adjustments")
+}
+
+model ClientPayment {
+  id                     String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId               String       @map("agency_id") @db.Uuid
+  branchId               String       @map("branch_id") @db.Uuid
+  clientId               String       @map("client_id") @db.Uuid
+  invoiceId              String       @map("invoice_id") @db.Uuid
+  paymentDate            DateTime     @map("payment_date") @db.Date
+  amountReceived         Decimal      @map("amount_received") @db.Decimal(14, 2)
+  tdsDeducted            Decimal      @default(0.00) @map("tds_deducted") @db.Decimal(12, 2)
+  paymentMode            PaymentMode  @map("payment_mode")
+  referenceTransactionId String       @map("reference_transaction_id") @db.VarChar(100)
+  bankName               String?      @map("bank_name") @db.VarChar(100)
+  recordedById           String       @map("recorded_by") @db.Uuid
+  notes                  String?      @db.VarChar(255)
+  createdAt              DateTime     @default(now()) @map("created_at") @db.Timestamptz
+
+  agency                 Agency       @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  branch                 AgencyBranch @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  client                 Client       @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  invoice                ClientInvoice @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  recordedBy             User         @relation("RecordedPaymentByUser", fields: [recordedById], references: [id], onDelete: Restrict)
+
+  @@map("client_payments")
+}
+
+// ==========================================
+// 10. DOCUMENT MANAGEMENT & EXPIRY ALERTS
+// ==========================================
+
+model DocumentType {
+  id                 String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId           String             @map("agency_id") @db.Uuid
+  name               String             @db.VarChar(80)
+  code               String             @db.VarChar(30)
+  applicableEntity   DocumentEntityType @map("applicable_entity")
+  isMandatory        Boolean            @default(false) @map("is_mandatory")
+  requiresExpiryDate Boolean            @default(false) @map("requires_expiry_date")
+  defaultAlertDays   Int[]              @default([60, 30, 15, 7]) @map("default_alert_days")
+  isActive           Boolean            @default(true) @map("is_active")
+  createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamptz
+
+  agency             Agency             @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  documents          Document[]
+
+  @@unique([agencyId, code])
+  @@map("document_types")
+}
+
+model Document {
+  id                 String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId           String             @map("agency_id") @db.Uuid
+  branchId           String?            @map("branch_id") @db.Uuid
+  documentTypeId     String             @map("document_type_id") @db.Uuid
+  entityType         DocumentEntityType @map("entity_type")
+  entityId           String             @map("entity_id") @db.Uuid
+  documentNumber     String?            @map("document_number") @db.VarChar(100)
+  title              String?            @db.VarChar(150)
+  description        String?            @db.Text
+  issuedBy           String?            @map("issued_by") @db.VarChar(100)
+  issueDate          DateTime?          @map("issue_date") @db.Date
+  expiryDate         DateTime?          @map("expiry_date") @db.Date
+  storageProvider    String             @default("S3_COMPLIANT") @map("storage_provider") @db.VarChar(50)
+  s3StorageKey       String             @map("s3_storage_key") @db.VarChar(255)
+  originalFileName   String             @map("original_file_name") @db.VarChar(150)
+  fileSizeBytes      Int                @map("file_size_bytes")
+  mimeType           String             @map("mime_type") @db.VarChar(60)
+  checksum           String?            @db.VarChar(64)
+  version            Int                @default(1)
+  isCurrent          Boolean            @default(true) @map("is_current")
+  verificationStatus VerificationStatus @default(PENDING) @map("verification_status")
+  uploadedById       String?            @map("uploaded_by") @db.Uuid
+  verifiedById       String?            @map("verified_by") @db.Uuid
+  verifiedAt         DateTime?          @map("verified_at") @db.Timestamptz
+  rejectionReason    String?            @map("rejection_reason") @db.VarChar(255)
+  metadata           Json?              @map("metadata")
+  createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt          DateTime?          @map("deleted_at") @db.Timestamptz
+
+  agency             Agency             @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  documentType       DocumentType       @relation(fields: [documentTypeId], references: [id], onDelete: Restrict)
+  uploadedBy         User?              @relation("UploadedByUser", fields: [uploadedById], references: [id], onDelete: SetNull)
+  verifiedBy         User?              @relation("VerifiedByUser", fields: [verifiedById], references: [id], onDelete: SetNull)
+
+  versions           DocumentVersion[]
+  alerts             ExpiryAlert[]
+
+  @@index([entityType, entityId])
+  @@index([expiryDate])
+  @@map("documents")
+}
+
+model DocumentVersion {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  documentId       String   @map("document_id") @db.Uuid
+  versionNumber    Int      @map("version_number")
+  s3StorageKey     String   @map("s3_storage_key") @db.VarChar(255)
+  originalFileName String   @map("original_file_name") @db.VarChar(150)
+  fileSizeBytes    Int      @map("file_size_bytes")
+  mimeType         String   @map("mime_type") @db.VarChar(60)
+  checksum         String?  @db.VarChar(64)
+  uploadedById     String?  @map("uploaded_by_id") @db.Uuid
+  reason           String?  @db.VarChar(255)
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  document         Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  uploadedBy       User?    @relation("DocumentVersionUploadedBy", fields: [uploadedById], references: [id], onDelete: SetNull)
+
+  @@unique([documentId, versionNumber])
+  @@map("document_versions")
+}
+
+model ExpiryAlert {
+  id                  String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId            String             @map("agency_id") @db.Uuid
+  documentId          String             @map("document_id") @db.Uuid
+  entityType          DocumentEntityType @map("entity_type")
+  entityId            String             @map("entity_id") @db.Uuid
+  expiryDate          DateTime           @map("expiry_date") @db.Date
+  alertThresholdDays  Int                @map("alert_threshold_days")
+  scheduledAlertDate  DateTime           @map("scheduled_alert_date") @db.Date
+  status              ExpiryAlertStatus  @default(SCHEDULED)
+  sentAt              DateTime?          @map("sent_at") @db.Timestamptz
+  acknowledgedById    String?            @map("acknowledged_by") @db.Uuid
+  acknowledgedAt      DateTime?          @map("acknowledged_at") @db.Timestamptz
+  createdAt           DateTime           @default(now()) @map("created_at") @db.Timestamptz
+
+  agency              Agency             @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  document            Document           @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  acknowledgedBy      User?              @relation("AcknowledgedAlertByUser", fields: [acknowledgedById], references: [id], onDelete: SetNull)
+
+  @@unique([documentId, alertThresholdDays])
+  @@index([scheduledAlertDate, status])
+  @@map("expiry_alerts")
+}
+
+// ==========================================
+// 11. RECRUITMENT & NOTIFICATIONS
+// ==========================================
+
+model RecruitmentCandidate {
+  id                    String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId              String            @map("agency_id") @db.Uuid
+  branchId              String            @map("branch_id") @db.Uuid
+  candidateCode         String            @unique @map("candidate_code") @db.VarChar(20)
+  firstName             String            @map("first_name") @db.VarChar(60)
+  lastName              String            @map("last_name") @db.VarChar(60)
+  phone                 String            @db.VarChar(20)
+  alternatePhone        String?           @map("alternate_phone") @db.VarChar(20)
+  email                 String?           @db.VarChar(100)
+  dateOfBirth           DateTime?         @map("date_of_birth") @db.Date
+  gender                Gender?
+  address               String?           @db.Text
+  previousEmployer      String?           @map("previous_employer") @db.VarChar(100)
+  skills                String[]          @default([])
+  source                String            @default("WALK_IN") @db.VarChar(50)
+  expectedSalary        Decimal?          @map("expected_salary") @db.Decimal(10, 2)
+  availabilityDate      DateTime?         @map("availability_date") @db.Date
+  notes                 String?           @db.Text
+  screeningNotes        String?           @map("screening_notes") @db.Text
+  screenedById          String?           @map("screened_by_id") @db.Uuid
+  screenedAt            DateTime?         @map("screened_at") @db.Timestamptz
+  skillTestNotes        String?           @map("skill_test_notes") @db.Text
+  skillTestScore        Decimal?          @map("skill_test_score") @db.Decimal(4, 1)
+  primaryDesignationId  String            @map("primary_designation_id") @db.Uuid
+  yearsOfExperience     Decimal           @default(0.0) @map("years_of_experience") @db.Decimal(3, 1)
+  currentCity           String            @map("current_city") @db.VarChar(50)
+  status                RecruitmentStatus @default(APPLIED)
+  convertedToEmployeeId String?           @unique @map("converted_to_employee_id") @db.Uuid
+  hiredAt               DateTime?         @map("hired_at") @db.Timestamptz
+  createdAt             DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt             DateTime?         @map("deleted_at") @db.Timestamptz
+
+  agency                Agency            @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  branch                AgencyBranch      @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  primaryDesignation    Designation       @relation(fields: [primaryDesignationId], references: [id], onDelete: Restrict)
+  screenedBy            User?             @relation("ScreenedByUser", fields: [screenedById], references: [id], onDelete: SetNull)
+
+  convertedEmployee     Employee[]        @relation("CandidateConversion")
+  interviews            CandidateInterview[]
+  offers                CandidateOffer[]
+
+  @@map("recruitment_candidates")
+}
+
+model CandidateInterview {
+  id                String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  candidateId       String               @map("candidate_id") @db.Uuid
+  interviewerUserId String               @map("interviewer_user_id") @db.Uuid
+  stageName         String               @map("stage_name") @db.VarChar(50)
+  scheduledAt       DateTime             @map("scheduled_at") @db.Timestamptz
+  completedAt       DateTime?            @map("completed_at") @db.Timestamptz
+  score             Decimal?             @db.Decimal(4, 1)
+  result            InterviewResult      @default(PENDING)
+  evaluationNotes   String?              @map("evaluation_notes") @db.Text
+  createdAt         DateTime             @default(now()) @map("created_at") @db.Timestamptz
+
+  candidate         RecruitmentCandidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  interviewer       User                 @relation("InterviewerUser", fields: [interviewerUserId], references: [id], onDelete: Restrict)
+
+  @@map("candidate_interviews")
+}
+
+model CandidateOffer {
+  id              String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId        String               @map("agency_id") @db.Uuid
+  candidateId     String               @map("candidate_id") @db.Uuid
+  designationId   String               @map("designation_id") @db.Uuid
+  branchId        String               @map("branch_id") @db.Uuid
+  offeredSalary   Decimal              @map("offered_salary") @db.Decimal(10, 2)
+  joiningDate     DateTime             @map("joining_date") @db.Date
+  offerDate       DateTime             @default(now()) @map("offer_date") @db.Date
+  expiryDate      DateTime?            @map("expiry_date") @db.Date
+  status          CandidateOfferStatus @default(DRAFT)
+  notes           String?              @db.Text
+  createdAt       DateTime             @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  agency          Agency               @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  candidate       RecruitmentCandidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  designation     Designation          @relation(fields: [designationId], references: [id], onDelete: Restrict)
+  branch          AgencyBranch         @relation(fields: [branchId], references: [id], onDelete: Restrict)
+
+  @@map("candidate_offers")
+}
+
+model Notification {
+  id            String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agencyId      String               @map("agency_id") @db.Uuid
+  branchId      String?              @map("branch_id") @db.Uuid
+  userId        String               @map("user_id") @db.Uuid
+  title         String               @db.VarChar(120)
+  body          String               @db.Text
+  category      NotificationCategory
+  priority      NotificationPriority @default(NORMAL)
+  actionUrl     String?              @map("action_url") @db.VarChar(255)
+  referenceType String?              @map("reference_type") @db.VarChar(50)
+  referenceId   String?              @map("reference_id") @db.VarChar(100)
+  dedupKey      String?              @unique @map("dedup_key") @db.VarChar(150)
+  isRead        Boolean              @default(false) @map("is_read")
+  readAt        DateTime?            @map("read_at") @db.Timestamptz
+  expiresAt     DateTime?            @map("expires_at") @db.Timestamptz
+  metadata      Json?                @map("metadata")
+  createdAt     DateTime             @default(now()) @map("created_at") @db.Timestamptz
+
+  agency        Agency               @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  user          User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
